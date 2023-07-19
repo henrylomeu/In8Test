@@ -1,43 +1,145 @@
 .dashboardContainer {
   display: flex;
-  justify-content: center; /* Centralizar horizontalmente */
+  justify-content: center; 
   margin-bottom: 20px;
-  position: relative; /* Adicionar posicionamento relativo */
+  position: relative; 
 }
-
-.sidebar {
+.userInfo {
   display: flex;
   flex-direction: column;
-  background-color: #f1f1f1;
-  padding: 20px;
-  width: 40px;
-  height: 100vh;
-  position: absolute; /* Posicionar no canto esquerdo */
-  left: 0; /* Alinhar no canto esquerdo */
 }
 
-.sidebarButton {
+.userContainer {
+  display: flex;
+  gap: 10px;
   margin-bottom: 10px;
-  cursor: pointer;
+}
+
+.userContainer p {
+  margin: 0;
+}
+
+.userContainer a {
+  padding: 8px 15px;
+  background-color: #888;
+  color: #fff;
+  border-radius: 5px;
+  text-decoration: none;
 }
 
 .chartContainer {
   margin-top: 20px;
   display: flex;
-  justify-content: center; /* Centralizar horizontalmente */
-  align-items: center; /* Centralizar verticalmente */
+  justify-content: center; 
+  align-items: center; 
   gap: 20px;
 }
 
+.card{
+  padding: 15px 30px; 
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  color: black;
+  font-size: 16px; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); 
+  width: 300px;
+}
+
+.card1 {
+  padding: 15px 30px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  color: black;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  margin: 0 auto;
+}
+
+
 .buttonContainer {
   display: flex;
-  justify-content: center; /* Centralizar horizontalmente */
-  align-items: center; /* Centralizar verticalmente */
+  justify-content: center; 
+  align-items: center; 
   gap: 10px;
   margin-top: 20px;
 }
 
-/* Media Query para ocultar a sidebar em dispositivos móveis */
+button {
+  padding: 15px 30px; 
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  color: black;
+  font-size: 16px; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); 
+  cursor: pointer;
+  width: 300px; 
+}
+
+button:nth-of-type(1) {
+  color: #888;
+  font-size: 14px; 
+}
+
+button:nth-of-type(2) {
+  color: #888;
+  font-size: 14px; 
+}
+
+button:nth-of-type(3) {
+  color: #888;
+  font-size: 14px; 
+}
+
+button i {
+  font-size: 24px; 
+  color: black;
+  margin-bottom: 8px; 
+}
+
+button i {
+  margin-bottom: 8px;
+}
+
+button:nth-of-type(1) i {
+  background-color: red;
+  color: white;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+button:nth-of-type(2) i {
+  background-color: green;
+  color: white;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+button:nth-of-type(3) i {
+  background-color: white;
+  color: black;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+}
+
+button span {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
 @media (max-width: 600px) {
   .sidebar {
     display: none;

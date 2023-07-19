@@ -10,26 +10,50 @@ const Dashboard = () => {
   const [expenses, setExpenses] = useState([]);
   const [income, setIncome] = useState([]);
   const [username, setUsername] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
 
   useEffect(() => {
-    const savedExpenses = loadData('expenses');
-    const savedIncome = loadData('income');
+    const savedExpenses = loadData(`expenses_${selectedYear}_${selectedMonth}`);
+    const savedIncome = loadData(`income_${selectedYear}_${selectedMonth}`);
 
     if (savedExpenses) {
       setExpenses(savedExpenses);
+    } else {
+      setExpenses([]);
     }
+
     if (savedIncome) {
       setIncome(savedIncome);
+    } else {
+      setIncome([]);
     }
 
     setUsername(location?.state?.username || '');
-  }, [location]);
+  }, [selectedMonth, selectedYear, location]);
 
   const handleLogout = () => {
-    saveData('expenses', []);
-    saveData('income', []);
+    saveData(`expenses_${selectedYear}_${selectedMonth}`, []);
+    saveData(`income_${selectedYear}_${selectedMonth}`, []);
     navigate('/');
   };
+
+  const availableMonths = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  const availableYears = ['2022', '2023', '2024', '2025'];
 
   const totalExpenses = expenses.reduce((total, expense) => total + expense.amount, 0);
   const totalIncome = income.reduce((total, incomeItem) => total + incomeItem.amount, 0);
@@ -50,101 +74,131 @@ const Dashboard = () => {
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
-  
+
     return (
       <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
         {`${(percent * 100).toFixed(0)}%`}
       </text>
     );
   };
-  
+
+  const hasData = expenses.length > 0 || income.length > 0;
+
   return (
     <div className={styles.dashboardContainer}>
       <div className={styles.sidebar}>
-        <button
-          className={styles.sidebarButton}
-          onClick={() => navigate('/expenses')}
-        >
-          <i className="fas fa-money-bill-wave"></i>
-        </button>
-        <button
-          className={styles.sidebarButton}
-          onClick={() => navigate('/income')}
-        >
-          <i className="fas fa-money-bill"></i>
-        </button>
       </div>
       <div>
         <h2 className={styles.dashboardTitle}>Dashboard</h2>
-        <button className={styles.logoutButton} onClick={handleLogout}>
-          Logout
-        </button>
+        <div className={styles.userInfo}>
+          <div className={styles.userContainer}>
+            <p>Usuário: {username}</p>
+            <div className={styles.logoutButton} onClick={handleLogout}>
+              <i className="fas fa-sign-out-alt"></i>
+            </div>
+          </div>
+        </div>
         <div>
-          <p>Usuário: {username}</p>
+          <div className={styles.card1}>
+            <label>
+              Selecione o Mês:
+              <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
+                <option value="">Selecione</option>
+                {availableMonths.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Selecione o Ano:
+              <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+                <option value="">Selecione</option>
+                {availableYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
         </div>
         <div className={styles.dashboardButtons}>
-        <div className={styles.buttonContainer}>
-          <button onClick={() => navigate('/expenses')}>
-            <i className="fas fa-money-bill-wave"></i>
-            Despesas: R$ {totalExpenses},00
-          </button>
-          <button onClick={() => navigate('/income')}>
-            <i className="fas fa-money-bill"></i>
-            Receitas: R$ {totalIncome},00
-          </button>
-          <button>
-            <i className="fas fa-balance-scale"></i>
-            Total Líquido: R$ {netTotal},00
-          </button>
+          <div className={styles.buttonContainer}>
+            <button onClick={() => navigate('/expenses')}>
+              <i className="fas fa-money-bill-wave"></i>
+              Despesas: R$ {totalExpenses},00
+            </button>
+            <button onClick={() => navigate('/income')}>
+              <i className="fas fa-money-bill"></i>
+              Receitas: R$ {totalIncome},00
+            </button>
+            <button>
+              <i className="fas fa-balance-scale"></i>
+              Total Líquido: R$ {netTotal},00
+            </button>
+          </div>
         </div>
-      </div>
         <div className={styles.chartContainer}>
-          <PieChart width={400} height={300}>
-            <Pie
-              data={chartData}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
-              fill="#8884d8"
-              label={<CustomLabel />}
-              labelLine={false}
-            >
-              {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-          <ResponsiveContainer width={300} height={300}>
-            <BarChart
-              width={500}
-              height={300}
-              data={barChartData}
-              margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar
-                dataKey="value"
-                fill={(entry, index) => COLORS[index % COLORS.length]}
-                label={<CustomLabel />}
-              >
-                {barChartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          {hasData ? (
+            <>
+              <div className={styles.card}>
+                <PieChart width={400} height={300}>
+                  <Pie
+                    data={chartData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    fill="#8884d8"
+                    label={<CustomLabel />}
+                    labelLine={false}
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </div>
+              <div className={styles.card}>
+                <ResponsiveContainer width={300} height={300}>
+                  <BarChart
+                    width={500}
+                    height={300}
+                    data={barChartData}
+                    margin={{
+                      top: 5,
+                      right: 30,
+                      left: 20,
+                      bottom: 5,
+                    }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar
+                      dataKey="value"
+                      fill={(entry, index) => COLORS[index % COLORS.length]}
+                      label={<CustomLabel />}
+                    >
+                      {barChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </>
+          ) : (
+            <div className={styles.emptyChart}>
+              <p>No data available for the selected month and year.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
