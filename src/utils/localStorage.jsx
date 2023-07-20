@@ -1,6 +1,3 @@
-// localStorage.js
-
-// Função para salvar os dados no localStorage
 export const saveData = (key, data) => {
   try {
     localStorage.setItem(key, JSON.stringify(data));
@@ -9,7 +6,6 @@ export const saveData = (key, data) => {
   }
 };
 
-// Função para recuperar os dados do localStorage
 export const loadData = (key) => {
   try {
     const data = localStorage.getItem(key);

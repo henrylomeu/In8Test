@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { saveData, loadData } from '../utils/localStorage';
+import styles from './Income.module.css'
 
 const Income = () => {
   const [income, setIncome] = useState([]);
@@ -9,25 +10,28 @@ const Income = () => {
   const [selectedYear, setSelectedYear] = useState('');
 
   useEffect(() => {
-    // Load saved income data for the selected month and year.
     const savedIncome = loadData(`income_${selectedYear}_${selectedMonth}`);
     if (savedIncome) {
       setIncome(savedIncome);
     }
-  }, [selectedMonth, selectedYear]); // Update whenever the selected month or year changes.
+  }, [selectedMonth, selectedYear]); 
 
   const handleAddIncome = () => {
+    if (!category || !amount || !selectedMonth || !selectedYear) {
+      alert('Please fill all the fields before adding a new income.');
+      return;
+    }
+  
     const newIncome = {
       category,
       amount: parseFloat(amount),
-      month: selectedMonth, // Include the selected month in the income object.
-      year: selectedYear, // Include the selected year in the income object.
+      month: selectedMonth,
+      year: selectedYear,
     };
 
-    // Update the income state for the selected month and year.
     const updatedIncome = [...income, newIncome];
     setIncome(updatedIncome);
-    saveData(`income_${selectedYear}_${selectedMonth}`, updatedIncome); // Save to local storage for the selected month and year.
+    saveData(`income_${selectedYear}_${selectedMonth}`, updatedIncome); 
 
     setCategory('');
     setAmount('');
@@ -48,79 +52,76 @@ const Income = () => {
     'December',
   ];
 
-  const availableYears = ['2022', '2023', '2024', '2025']; // Example list of available years.
+  const availableYears = ['2022', '2023', '2024', '2025']; 
 
-  // Filter income items based on the selected month and year.
   const filteredIncome = selectedMonth && selectedYear
     ? income.filter((item) => item.month === selectedMonth && item.year === selectedYear)
     : income;
 
-  return (
-    <div>
-      <h2>Receitas</h2>
-      <div>
-        <label>
-          Selecione o Mês:
-          <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
-            <option value="">Todos</option>
-            {availableMonths.map((month) => (
-              <option key={month} value={month}>
-                {month}
-              </option>
+    return (
+      <div className={styles.container}>
+        <div className={styles.card}>
+          <h2>Income</h2>
+          <div className={styles.field}>
+            <label>
+              Select Month:
+              <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
+                <option value="">Select</option>
+                {availableMonths.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Select Year:
+              <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+                <option value="">Select</option>
+                {availableYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div className={styles.field}>
+            <label>
+              Category:
+              <input
+                type="text"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              />
+            </label>
+            <label>
+              Value:
+              <input
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+              />
+            </label>
+          </div>
+          <div className={styles.addBtn}>
+            <button type="button" onClick={handleAddIncome}>
+              Add Income
+            </button>
+          </div>
+        </div>
+        <div className={styles.card1}>
+          <h3>Income:</h3>
+          <ul className={styles.incomeList}>
+            {filteredIncome.map((incomeItem, index) => (
+              <li key={index}>
+                Category: {incomeItem.category}, Value: R$ {incomeItem.amount},00
+              </li>
             ))}
-          </select>
-        </label>
+          </ul>
+        </div>
       </div>
-      <div>
-        <label>
-          Selecione o Ano:
-          <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
-            <option value="">Todos</option>
-            {availableYears.map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-      <div>
-        <label>
-          Categoria:
-          <input
-            type="text"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          Valor:
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
-        </label>
-      </div>
-      <div>
-        <button type="button" onClick={handleAddIncome}>
-          Adicionar Receita
-        </button>
-      </div>
-      <div>
-        <h3>Receitas:</h3>
-        <ul>
-          {filteredIncome.map((incomeItem, index) => (
-            <li key={index}>
-              Mês: {incomeItem.month}, Ano: {incomeItem.year}, Categoria: {incomeItem.category}, Valor: {incomeItem.amount}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Income;

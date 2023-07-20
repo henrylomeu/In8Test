@@ -33,8 +33,13 @@ const Dashboard = () => {
   }, [selectedMonth, selectedYear, location]);
 
   const handleLogout = () => {
-    saveData(`expenses_${selectedYear}_${selectedMonth}`, []);
-    saveData(`income_${selectedYear}_${selectedMonth}`, []);
+    localStorage.clear();
+
+    setExpenses([]);
+    setIncome([]);
+    setSelectedMonth('');
+    setSelectedYear('');
+
     navigate('/');
   };
 
@@ -92,7 +97,7 @@ const Dashboard = () => {
         <h2 className={styles.dashboardTitle}>Dashboard</h2>
         <div className={styles.userInfo}>
           <div className={styles.userContainer}>
-            <p>Usuário: {username}</p>
+            <p>User: {username}</p>
             <div className={styles.logoutButton} onClick={handleLogout}>
               <i className="fas fa-sign-out-alt"></i>
             </div>
@@ -100,43 +105,47 @@ const Dashboard = () => {
         </div>
         <div>
           <div className={styles.card1}>
-            <label>
-              Selecione o Mês:
-              <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
-                <option value="">Selecione</option>
-                {availableMonths.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Selecione o Ano:
-              <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
-                <option value="">Selecione</option>
-                {availableYears.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <div className={styles.selectContainer}>
+              <label>
+                Select Month:
+                <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
+                  <option value="">Selecione</option>
+                  {availableMonths.map((month) => (
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className={styles.selectContainer}>
+              <label>
+                Select Year:
+                <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+                  <option value="">Selecione</option>
+                  {availableYears.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
           </div>
         </div>
         <div className={styles.dashboardButtons}>
           <div className={styles.buttonContainer}>
             <button onClick={() => navigate('/expenses')}>
               <i className="fas fa-money-bill-wave"></i>
-              Despesas: R$ {totalExpenses},00
+              Expenses: R$ {totalExpenses},00
             </button>
             <button onClick={() => navigate('/income')}>
               <i className="fas fa-money-bill"></i>
-              Receitas: R$ {totalIncome},00
+              Income: R$ {totalIncome},00
             </button>
             <button>
               <i className="fas fa-balance-scale"></i>
-              Total Líquido: R$ {netTotal},00
+              Total: R$ {netTotal},00
             </button>
           </div>
         </div>
@@ -196,7 +205,7 @@ const Dashboard = () => {
             </>
           ) : (
             <div className={styles.emptyChart}>
-              <p>No data available for the selected month and year.</p>
+              <p>No data available .</p>
             </div>
           )}
         </div>
